@@ -1,7 +1,10 @@
 const mongoose = require("mongoose");
-module.exports = async () => {
+const dotenv = require("dotenv");
+dotenv.config();
+module.exports = () => {
   try {
-    const conn = await mongoose.connect("mongodb://localhost:27017/practice");
+    mongoose.set("strictQuery", true);
+    mongoose.connect(process.env.DB_URL);
     console.log(`mongodb is connected`);
   } catch (err) {
     console.log(`error:${err.message}`);
