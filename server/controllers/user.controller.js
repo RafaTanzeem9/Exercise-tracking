@@ -4,23 +4,22 @@ const { validateUser } = require("../utiles/validations");
 
 const registerUser = async (req, res) => {
   try {
-    const body = {
+    const data = {
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       email: req.body.email,
       password: req.body.password,
     };
     try {
-      await validateUser.validateAsync(body);
+      await validateUser.validateAsync(data);
       const userExist = await User.findOne({ email: req.body.email });
       if (userExist)
         return res
           .status(400)
           .send({ message: "user already existed with this email" });
-      const salt = await bcrypt.genSalt(10);
-      body.password = await bcrypt.hash(req.body.password, salt);
-      const user = await User.create(body);
-      return res.status(200).send({ message: "user created", data: user });
+      data.password = await bcrypt.hash(req.body.password, 8);
+      const user = await User.create(data);
+      return res.status(200).send({ message: "user created", user });
     } catch (err) {
       return res.send(err.details);
     }
@@ -30,15 +29,22 @@ const registerUser = async (req, res) => {
 };
 
 const loginUser = async (req, res) => {
+  console.log(req.body);
   try {
     const user = await User.find({ email: req.body.email });
+    console.log(user);
     if (!user)
-      res.status(404).send({ message: "user not existed with this email" });
+      return res
+        .status(404)
+        .send({ message: "user not existed with this email" });
+    console.log("check");
+    if (await bcrypt.compare(req.body.password, user.password))
+      return res.status(200).send({ message: "user logedIn", user });
 
-    const check = await bcrypt.compare(req.body.password, user.password);
-    if (!check) res.status(200).send({ message: "user logedIn", data: user });
+    // console.log("check2", check);
+    return res.status(400).send({ message: "wrong password" });
   } catch (err) {
     res.status(500).send({ message: "server error", error: err });
   }
 };
-module.exports = { registerUser };
+module.exports = { registerUser, loginUser };
