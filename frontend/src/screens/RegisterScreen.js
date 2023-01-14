@@ -37,9 +37,9 @@ function RegisterScreen() {
     if (
       !name ||
       !email ||
-      age ||
-      image ||
-      address ||
+      !age ||
+      !image ||
+      !address ||
       !password ||
       !confirmPassword
     ) {
