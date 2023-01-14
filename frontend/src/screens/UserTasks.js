@@ -146,10 +146,10 @@ function UserTasks() {
         </thead>
         <tbody>
           {tasks.length &&
-            tasks.map((task) => {
+            tasks.map((task, i) => {
               return (
                 <tr>
-                  <td>1</td>
+                  <td>{i + 1}</td>
                   <td>{task.type}</td>
                   <td>{task.duration}</td>
                   <td>{task.comment}</td>
